@@ -6,14 +6,14 @@
     //       to keep the application as dead simple to read as possible. Do not use in production!
     FHIR.oauth2.ready(client => {
         client.patient.read()
-              .then(patient => {
-                let name = patient.name[0].given[0]
+              .then(pt => {
+                let name = pt.name[0].given[0]
                 document.getElementById('greet').innerHTML = `${name}'s medications`
               })
-        client.patient.request('MedicationRequest')
+        client.patient.request('MedicationRequest', {'pageLimit':0, 'flat':true})
               .then(medications => {
-                let meds = medications.entry.map((m) => m.resource.medicationCodeableConcept.coding[0].display);
-                let listHTML = meds.map((e) => `<li>${e}</li>`).join(' ');
+                let meds = medications.map((m) => m.medicationCodeableConcept.coding[0].display);
+                let listHTML = meds.map((e) => `<li>${e}</li>`).join('');
                 document.getElementById('meds').innerHTML = `<ul>${listHTML}</ul>`
               })
     })
